@@ -46,9 +46,7 @@ export default function App() {
   return (
     <>
       <Navbar />
-      <main className="min-h-[calc(100vh_-_3.5rem)]">
-        <Outlet />
-      </main>
+      <Outlet />
     </>
   );
 }
