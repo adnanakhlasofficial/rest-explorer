@@ -16,17 +16,29 @@ export async function clientLoader() {
 
 export default function Countries({ loaderData }: Route.ComponentProps) {
   const countries: any = loaderData;
-  const [country, setCountry] = useState("");
-  const [region, setRegion] = useState("All Regions");
+  const [search, setSearch] = useState<string>("");
+  const [region, setRegion] = useState<string>("");
+
+  const filteredCountries = countries.filter((country: any) => {
+    const matchesRegion =
+      !region || country.region.toLowerCase() === region.toLowerCase();
+
+    const matchesSearch =
+      !search ||
+      country.name.common.toLowerCase().includes(search.toLowerCase());
+    return matchesSearch && matchesRegion;
+  });
 
   return (
     <main className="container mx-auto px-4 my-12 space-y-12">
-      <h2 className="text-2xl font-semibold">Countries: {countries.length}</h2>
+      <h2 className="text-2xl font-semibold">
+        Countries: {filteredCountries.length}
+      </h2>
       <form className="flex gap-4">
         <div className="w-full">
           <input
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="px-4 py-2 min-h-12 w-full border border-gray-300 rounded-md outline-none focus:border-violet-500 transition-colors duration-300"
             type="text"
             placeholder="Search by name..."
@@ -38,12 +50,17 @@ export default function Countries({ loaderData }: Route.ComponentProps) {
             onChange={(e) => setRegion(e.target.value)}
             className="px-4 py-2 min-h-12 w-full border border-gray-300 rounded-md outline-none focus:border-violet-500 transition-colors duration-300"
           >
-            <option value="All Regions">All Regions</option>
+            <option value="">All Regions</option>
+            <option value="africa">Africa</option>
+            <option value="americas">America</option>
+            <option value="asia">Asia</option>
+            <option value="europe">Europe</option>
+            <option value="oceania">Oceania</option>
           </select>
         </div>
       </form>
       <section className="grid grid-cols-3 gap-6">
-        {countries.map((country: any, key: number) => (
+        {filteredCountries.map((country: any, key: number) => (
           <Link to={`/countries/${country.name.common}`}>
             <div
               className="p-6 border border-gray-300 rounded-lg hover:border-violet-500 transition-colors duration-300"
